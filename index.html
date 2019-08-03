@@ -15,13 +15,31 @@
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <div>
+        <div draggable = "true">
             <span>Holy Crap</span>
             <br>
             <input type="radio" name="draw" onclick="drawOn = true" autocomplete="off" checked>
             <label>Drawing Mode On</label>
             <input type="radio" name="draw" onclick="drawOn = false" autocomplete="off">
             <label>Drawing Mode Off</label>
+            <br>
+            <input type="checkbox" autocomplete="off" onclick="drawGoal = (drawGoal == true) ? drawGoal = false : drawGoal = true">
+            <label>Draw Goal</label>
+            <br>
+            <span id="position"></span>
+            <br>
+            <label>x starting point: </label>
+            <!-- when inputted, change the starting x, y, or degree amount -->
+            <input id="x-start" type="number" onchange="player.start.x = Number(document.getElementById('x-start').value)" value="0" autocomplete="off">
+            <br>
+            <label>y starting point: </label>
+            <input id="y-start" type="number" onchange="player.start.y = Number(document.getElementById('y-start').value)" value="0" autocomplete="off">
+            <br>
+            <label>starting rotation (degrees): </label>
+            <input id="rot-start" type="number" onchange="player.start.rot = (((Number(document.getElementById('rot-start').value) % 360) + 90) / 180) * Math.PI"  value="0" autocomplete="off">
+            <br>
+            <button id="toggle-line-data" onclick="toggleLineData()">Show Line Data</button>
+            <span id="lines"></span>
         </div>
         <canvas></canvas>
         <script src="math.js"></script>
