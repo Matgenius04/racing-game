@@ -203,18 +203,18 @@ function drawPlayer() {
 }
 // checks to see what key combinations are pressed down at the time
 function checkCombinations() {
-    if (keys.find((v) => v == "w")) {
+    if (keys.find((v) => v == "w") || keys.fill((v) => v == "ArrowUp")) {
         player.vx += (1) * Math.cos(player.rot);
         player.vy += (1) * Math.sin(player.rot);
     }
-    if (keys.find((v) => v == "s")) {
+    if (keys.find((v) => v == "s") || keys.fill((v) => v == "ArrowDown")) {
         player.vx -= (1/2) * Math.cos(player.rot);
         player.vy -= (1/2) * Math.sin(player.rot);
     }
-    if (keys.find((v) => v == "a")) {
+    if (keys.find((v) => v == "a") || keys.fill((v) => v == "ArrowLeft")) {
         player.rot += 5 * (Math.PI / 180);
     }
-    if (keys.find((v) => v == "d")) {
+    if (keys.find((v) => v == "d") || keys.fill((v) => v == "ArrowRight")) {
         player.rot -= 5 * (Math.PI / 180);
     }
     if (keys.find((v) => v == "Control") && keys.find((v) => v =="z") && checkForUndo == true) {
