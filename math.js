@@ -89,3 +89,33 @@ function intercepting(line1,line2) {
     
     return {b:intercept,x:x,y:y};
 }
+function perpendicular(formula) {
+    return {m:-1/formula.m,b:formula.b};
+}
+function coterminalAngle(rad) {
+    while (rad < 0) {
+        rad += 2 * Math.PI;
+    }
+    return rad % (2 * Math.PI);
+}
+// where x1,y1,x2 and y2 are the points of the line segment
+// this is based on http://paulbourke.net/geometry/pointlineplane/
+// and https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+function distToSegment(x1,y1,x2,y2,x3,y3) {
+    if (distSqr(x2,y2,x1,y1) == 0) {
+        return {d: distSqr(x3,y3,x1,y1), x:x1, y:y1};
+    }
+    let u = (((x3 - x1) * (x2 - x1)) + ((y3 - y1) * (y2 - y1))) / (distSqr(x2,y2,x1,y1));
+    u = Math.max(0, Math.min(1,u));
+    let x = x1 + (u * (x2 - x1));
+    let y = y1 + (u * (y2 - y1));
+    let dist = Math.sqrt(distSqr(x,y,x3,y3));
+    return {
+        d: dist,
+        x: x,
+        y: y
+    }
+}
+function distSqr(x1,y1,x2,y2) {
+    return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+}

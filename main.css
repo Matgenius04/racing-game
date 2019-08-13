@@ -1,4 +1,4 @@
-div {
+.default {
     background-color: rgba(0,0,0,0.25);
     position: absolute;
     display: block;
@@ -7,4 +7,28 @@ div {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     border: 1px solid;
+}
+
+body {
+    background: rgba(0,0,0,1);
+}
+
+.divider-vertical {
+    background-color: gray;
+    box-shadow: 0px 0px 5px 5px gray;
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 0.5px);
+}
+
+.divider-horizontal {
+    background-color: gray;
+    box-shadow: 0px 0px 5px 5px gray;
+    height: 1px;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: calc(50% - 0.5px);
 }
