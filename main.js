@@ -147,8 +147,8 @@ function setup() {
         if (drawOn == true) {
             if (orientation == true) {
                 // if the player canvas is the left half, change the centers of the canvas
-                mouse.x1 = (ev.clientX - (document.body.clientWidth / 4));
-                mouse.y1 = -ev.clientY + (document.body.clientHeight / 2);
+                mouse.x1 = (ev.clientX - (document.body.clientWidth / 4)) + player.pan.x;
+                mouse.y1 = (-ev.clientY + (document.body.clientHeight / 2)) + player.pan.y;
                 mouse.goal = drawGoal;
             } else {
                 // else if the player canvas is the top half, change the centers of the canvas
@@ -163,23 +163,23 @@ function setup() {
         if (drawOn == true) {
             if (orientation == true) {
                 // if the player canvas is the left half, change the centers of the canvas
-                mouse.x2 = (ev.clientX - (document.body.clientWidth / 4));
-                mouse.y2 = -ev.clientY + (document.body.clientHeight / 2);
+                mouse.x2 = (ev.clientX - (document.body.clientWidth / 4)) + player.pan.x;
+                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 2)) + player.pan.y;
             } else {
                 // if the player canvas is the top half, change the centers of the canvas
-                mouse.x2 = ev.clientX - (document.body.clientWidth / 2);
-                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 4));
+                mouse.x2 = (ev.clientX - (document.body.clientWidth / 2)) + player.pan.x;
+                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 4)) + player.pan.y;
             }
         }
     })
     window.addEventListener("mouseup", (ev) => {
         if (drawOn == true && mouse.x1 != undefined && mouse.x2 != undefined) {
             if (orientation == true) {
-                mouse.x2 = (ev.clientX - (document.body.clientWidth / 4));
-                mouse.y2 = -ev.clientY + (document.body.clientHeight / 2);
+                mouse.x2 = (ev.clientX - (document.body.clientWidth / 4)) + player.pan.x;
+                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 2)) + player.pan.y;
             } else {
-                mouse.x2 = ev.clientX - (document.body.clientWidth / 2);
-                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 4));
+                mouse.x2 = (ev.clientX - (document.body.clientWidth / 2)) + player.pan.x;
+                mouse.y2 = (-ev.clientY + (document.body.clientHeight / 4)) + player.pan.y;
             }
             // push current mouse coords into lines array
             if ((mouse.x1 == mouse.x2 && mouse.y1 == mouse.y2) == false) {
@@ -221,44 +221,56 @@ async function draw() {
     // updates position
     player.x += player.vx;
     player.y += player.vy;
-    //simulate friction/gravity/air resistance
+    // simulate friction/gravity/air resistance
     player.vx *= 85 / 100;
     player.vy *= 85 / 100;
+    // set the pan to the x and y position of the player
+    player.pan.x = player.x;
+    player.pan.y = player.y;
     // put position info in the box
     document.getElementById("position").innerHTML = `x: ${Math.floor(player.x)} y: ${Math.floor(player.y)} rot: ${((180 * (player.rot/Math.PI)).toPrecision(2) % 360)-90}`;
     // draws player
     drawPlayer();
     // draws all the lines in array lines and does collision detection
     let stopDetecting = false;
+    let pan = player.pan;
     for (let i = 0; i < lines.length; i++) {
+        let e = {
+            x1: lines[i].x1 - pan.x,
+            y1: lines[i].y1 - pan.y,
+            x2: lines[i].x2 - pan.x,
+            y2: lines[i].y2 - pan.y,
+            goal: lines[i].goal,
+            goalNumber: lines[i].goalNumber
+        };
         // draw the line
-        drawLine(lines[i]);
+        drawLine(e);
         // get all of the player vertices and make them into the lines of the triangle
         let pv = player.vertices;
         let line1 = {
-            x1: pv.x1,
-            y1: pv.y1,
-            x2: pv.x2,
-            y2: pv.y2
+            x1: pv.x1 - pan.x,
+            y1: pv.y1 - pan.y,
+            x2: pv.x2 - pan.x,
+            y2: pv.y2 - pan.y
         };
         let line2 = {
-            x1: pv.x2,
-            y1: pv.y2,
-            x2: pv.x3,
-            y2: pv.y3
+            x1: pv.x2 - pan.x,
+            y1: pv.y2 - pan.y,
+            x2: pv.x3 - pan.x,
+            y2: pv.y3 - pan.y
         };
         let line3 = {
-            x1: pv.x3,
-            y1: pv.y3,
-            x2: pv.x1,
-            y2: pv.y1
+            x1: pv.x3 - pan.x,
+            y1: pv.y3 - pan.y,
+            x2: pv.x1 - pan.x,
+            y2: pv.y1 - pan.y
         };
-        // console.log(intercepting(line1,lines[i]).b);
-        if ((intercepting(line1, lines[i]).b == true ||
-                intercepting(line2, lines[i]).b == true ||
-                intercepting(line3, lines[i]).b == true) &&
+        // console.log(intercepting(line1,e).b);
+        if ((intercepting(line1, e).b == true ||
+                intercepting(line2, e).b == true ||
+                intercepting(line3, e).b == true) &&
             stopDetecting == false) {
-            if (lines[i].goal == true) {
+            if (e.goal == true) {
                 collisionHandler(true);
                 console.log("YOU WON!!!!");
             } else {
@@ -270,10 +282,10 @@ async function draw() {
     }
     // draws the line that the player is currently drawing
     drawLine({
-        x1: mouse.x1,
-        y1: mouse.y1,
-        x2: mouse.x2,
-        y2: mouse.y2,
+        x1: mouse.x1 - player.pan.x,
+        y1: mouse.y1 - player.pan.y,
+        x2: mouse.x2 - player.pan.x,
+        y2: mouse.y2 - player.pan.y,
         goal: mouse.goal
     });
 }
@@ -316,17 +328,17 @@ function drawPlayer() {
     pv.y3 = player.y + (10 * Math.sin(player.rot + (220 * (Math.PI / 180))));
     // draw that triangle
     if (graphics == 1) {
-        ctx.translate(player.x, player.y);
+        ctx.translate(player.x - player.pan.x, player.y - player.pan.y);
         ctx.rotate(player.rot + (Math.PI / 2));
         ctx.drawImage(rocket, -17.5, -15, 35, 30);
         ctx.rotate(-player.rot - (Math.PI / 2));
-        ctx.translate(-player.x, -player.y);
+        ctx.translate(-player.x + player.pan.x, -player.y + player.pan.y);
     } else {
         ctx.beginPath();
         ctx.fillStyle = "black";
-        ctx.moveTo(pv.x1, pv.y1);
-        ctx.lineTo(pv.x2, pv.y2);
-        ctx.lineTo(pv.x3, pv.y3);
+        ctx.moveTo(pv.x1 - player.pan.x, pv.y1 - player.pan.y);
+        ctx.lineTo(pv.x2 - player.pan.x, pv.y2 - player.pan.y);
+        ctx.lineTo(pv.x3 - player.pan.x, pv.y3 - player.pan.y);
         ctx.closePath();
         ctx.fill();
     }
@@ -342,10 +354,10 @@ function checkCombinations() {
         player.vy -= (3 / 4) * Math.sin(player.rot);
     }
     if (keysdown.find((v) => v == "a") || keysdown.find((v) => v == "ArrowLeft")) {
-        player.rot += 5 * (Math.PI / 180);
+        player.rot += 10 * (Math.PI / 180);
     }
     if (keysdown.find((v) => v == "d") || keysdown.find((v) => v == "ArrowRight")) {
-        player.rot -= 5 * (Math.PI / 180);
+        player.rot -= 10 * (Math.PI / 180);
     }
     if (keysdown.find((v) => v == "Control") && keysdown.find((v) => v == "z") && checkForUndo == true) {
         lines.pop();
